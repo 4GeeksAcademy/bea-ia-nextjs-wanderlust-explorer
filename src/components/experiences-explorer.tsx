@@ -109,16 +109,20 @@ export function ExperiencesExplorer({
 
       <p className="resultCount">{filtered.length} experiencias encontradas</p>
 
-      <div className="cardsGrid">
-        {paginated.map((experience) => (
-          <ExperienceCard
-            key={experience.id}
-            experience={experience}
-            isFavorite={isFavorite(experience.id)}
-            onToggleFavorite={toggleFavorite}
-          />
-        ))}
-      </div>
+      {filtered.length === 0 ? (
+        <p className="emptyState">No se encontraron resultados</p>
+      ) : (
+        <div className="cardsGrid">
+          {paginated.map((experience) => (
+            <ExperienceCard
+              key={experience.id}
+              experience={experience}
+              isFavorite={isFavorite(experience.id)}
+              onToggleFavorite={toggleFavorite}
+            />
+          ))}
+        </div>
+      )}
 
       {totalPages > 1 ? (
         <nav className="pagination" aria-label="Paginacion de experiencias">

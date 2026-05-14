@@ -11,7 +11,7 @@ export default function Home() {
             Explora 100 propuestas de viaje con busqueda inteligente, filtros por
             categoria y destino, y enlaces compartibles con estado prefiltrado.
           </p>
-          <Link href="/experiencies" className="heroCta">
+          <Link href="/experiences" className="heroCta">
             Ir al explorador
           </Link>
         </div>
@@ -20,7 +20,7 @@ export default function Home() {
           <p>
             Ejemplo de URL compartible:
             <br />
-            /experiencies?search=vela&category=Adventure&destination=Split%2C%20Croatia
+            /experiences?search=vela&category=Adventure&destination=Split%2C%20Croatia
           </p>
         </div>
       </div>

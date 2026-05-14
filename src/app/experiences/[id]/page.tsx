@@ -24,7 +24,7 @@ export default async function ExperienceDetailPage({ params }: ExperienceDetailP
 
   return (
     <section className="container sectionSpacing">
-      <Link href="/experiencies" className="backLink">
+      <Link href="/experiences" className="backLink">
         ← Volver al explorador
       </Link>
 
