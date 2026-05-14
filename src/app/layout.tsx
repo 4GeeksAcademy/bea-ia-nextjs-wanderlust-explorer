@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Fraunces, Manrope } from "next/font/google";
 import { FavoritesProvider } from "@/components/favorites-provider";
-import { TopNav } from "@/components/top-nav";
+import { Navbar } from "@/components/navbar";
 import "./globals.css";
 
 const manrope = Manrope({
@@ -28,7 +28,7 @@ export default function RootLayout({
     <html lang="es" className={`${manrope.variable} ${fraunces.variable}`}>
       <body>
         <FavoritesProvider>
-          <TopNav />
+          <Navbar />
           <main className="mainContent">{children}</main>
         </FavoritesProvider>
       </body>

@@ -3,15 +3,18 @@
 import Image from "next/image";
 import Link from "next/link";
 import type { Experience } from "@/types/experience";
-import { useFavorites } from "@/components/favorites-provider";
 
 type ExperienceCardProps = {
   experience: Experience;
+  isFavorite: boolean;
+  onToggleFavorite: (id: number) => void;
 };
 
-export function ExperienceCard({ experience }: ExperienceCardProps) {
-  const { isFavorite, toggleFavorite } = useFavorites();
-  const favorite = isFavorite(experience.id);
+export function ExperienceCard({
+  experience,
+  isFavorite,
+  onToggleFavorite,
+}: ExperienceCardProps) {
 
   return (
     <article className="experienceCard">
@@ -25,11 +28,11 @@ export function ExperienceCard({ experience }: ExperienceCardProps) {
         />
         <button
           type="button"
-          className={`favoriteButton${favorite ? " favorite" : ""}`}
-          aria-label={favorite ? "Quitar de favoritos" : "Agregar a favoritos"}
-          onClick={() => toggleFavorite(experience.id)}
+          className={`favoriteButton${isFavorite ? " favorite" : ""}`}
+          aria-label={isFavorite ? "Quitar de favoritos" : "Agregar a favoritos"}
+          onClick={() => onToggleFavorite(experience.id)}
         >
-          {favorite ? "♥" : "♡"}
+          {isFavorite ? "♥" : "♡"}
         </button>
       </div>
       <div className="cardContent">

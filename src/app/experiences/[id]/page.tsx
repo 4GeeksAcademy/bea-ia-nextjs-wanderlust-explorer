@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ExperienceCard } from "@/components/experience-card";
+import { ExperienceCardConnected } from "@/components/experience-card-connected";
 import { experiences } from "@/data/experiences";
 
 type ExperienceDetailProps = {
@@ -60,7 +60,7 @@ export default async function ExperienceDetailPage({ params }: ExperienceDetailP
 
       <h2 className="relatedTitle">Vista de tarjeta</h2>
       <div className="singleCardWrap">
-        <ExperienceCard experience={experience} />
+        <ExperienceCardConnected experience={experience} />
       </div>
     </section>
   );

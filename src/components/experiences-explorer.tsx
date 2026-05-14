@@ -3,6 +3,10 @@
 import { useEffect, useMemo } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { ExperienceCard } from "@/components/experience-card";
+import { FilterBar } from "@/components/filter-bar";
+import { SearchBar } from "@/components/search-bar";
+import { useFavorites } from "@/components/favorites-provider";
+import { useExperienceFilters } from "@/hooks/use-experience-filters";
 import type { Experience } from "@/types/experience";
 
 type ExplorerProps = {
@@ -11,16 +15,13 @@ type ExplorerProps = {
   destinations: string[];
 };
 
-function normalizeRegexInput(value: string) {
-  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&").trim();
-}
-
 export function ExperiencesExplorer({
   experiences,
   categories,
   destinations,
 }: ExplorerProps) {
   const ITEMS_PER_PAGE = 12;
+  const { isFavorite, toggleFavorite } = useFavorites();
   const searchParams = useSearchParams();
   const router = useRouter();
   const pathname = usePathname();
@@ -30,10 +31,13 @@ export function ExperiencesExplorer({
   const destination = searchParams.get("destination") ?? "";
   const page = Number(searchParams.get("page") ?? "1");
   const currentPage = Number.isInteger(page) && page > 0 ? page : 1;
-  const selectedCategory =
-    categories.find(
-      (option) => option.toLowerCase() === category.trim().toLowerCase(),
-    ) ?? "";
+  const { filtered, selectedCategory } = useExperienceFilters({
+    experiences,
+    categories,
+    search,
+    category,
+    destination,
+  });
 
   const setParam = (key: string, value: string, resetPage = false) => {
     const next = new URLSearchParams(searchParams.toString());
@@ -51,28 +55,6 @@ export function ExperiencesExplorer({
       scroll: false,
     });
   };
-
-  const filtered = useMemo(() => {
-    const normalizedTerm = normalizeRegexInput(search);
-    const normalizedDestination = normalizeRegexInput(destination);
-    const titleRegex = normalizedTerm ? new RegExp(normalizedTerm, "i") : null;
-    const destinationRegex = normalizedDestination
-      ? new RegExp(normalizedDestination, "i")
-      : null;
-    const categoryNeedle = selectedCategory || category;
-
-    return experiences.filter((experience) => {
-      const matchSearch = titleRegex ? titleRegex.test(experience.title) : true;
-      const matchCategory = categoryNeedle
-        ? experience.category.toLowerCase() === categoryNeedle.toLowerCase()
-        : true;
-      const matchDestination = destinationRegex
-        ? destinationRegex.test(experience.destination)
-        : true;
-
-      return matchSearch && matchCategory && matchDestination;
-    });
-  }, [category, destination, experiences, search, selectedCategory]);
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / ITEMS_PER_PAGE));
   const clampedPage = Math.min(currentPage, totalPages);
@@ -111,47 +93,30 @@ export function ExperiencesExplorer({
       </div>
 
       <div className="filtersPanel">
-        <input
-          type="text"
-          placeholder="Buscar por titulo..."
+        <SearchBar
           value={search}
-          onChange={(event) => setParam("search", event.target.value, true)}
-          className="searchInput"
+          onChange={(value) => setParam("search", value, true)}
         />
-
-        <select
-          value={selectedCategory}
-          onChange={(event) => setParam("category", event.target.value, true)}
-          className="selectInput"
-        >
-          <option value="">Todas las categorias</option>
-          {categories.map((item) => (
-            <option key={item} value={item}>
-              {item}
-            </option>
-          ))}
-        </select>
-
-        <input
-          type="text"
-          value={destination}
-          onChange={(event) => setParam("destination", event.target.value, true)}
-          className="searchInput"
-          placeholder="Destino (ej: Croatia, Kyoto, Lisbon...)"
-          list="destination-options"
+        <FilterBar
+          categories={categories}
+          destinations={destinations}
+          selectedCategory={selectedCategory}
+          destination={destination}
+          onCategoryChange={(value) => setParam("category", value, true)}
+          onDestinationChange={(value) => setParam("destination", value, true)}
         />
-        <datalist id="destination-options">
-          {destinations.map((item) => (
-            <option key={item} value={item} />
-          ))}
-        </datalist>
       </div>
 
       <p className="resultCount">{filtered.length} experiencias encontradas</p>
 
       <div className="cardsGrid">
         {paginated.map((experience) => (
-          <ExperienceCard key={experience.id} experience={experience} />
+          <ExperienceCard
+            key={experience.id}
+            experience={experience}
+            isFavorite={isFavorite(experience.id)}
+            onToggleFavorite={toggleFavorite}
+          />
         ))}
       </div>
 

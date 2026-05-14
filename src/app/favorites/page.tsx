@@ -5,7 +5,7 @@ import { useFavorites } from "@/components/favorites-provider";
 import { experiences } from "@/data/experiences";
 
 export default function FavoritesPage() {
-  const { favoriteIds } = useFavorites();
+  const { favoriteIds, isFavorite, toggleFavorite } = useFavorites();
 
   const favorites = experiences.filter((experience) =>
     favoriteIds.includes(experience.id),
@@ -25,7 +25,12 @@ export default function FavoritesPage() {
       ) : (
         <div className="cardsGrid">
           {favorites.map((experience) => (
-            <ExperienceCard key={experience.id} experience={experience} />
+            <ExperienceCard
+              key={experience.id}
+              experience={experience}
+              isFavorite={isFavorite(experience.id)}
+              onToggleFavorite={toggleFavorite}
+            />
           ))}
         </div>
       )}
